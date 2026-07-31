@@ -1,0 +1,2182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TMX — Morada Golden Ville</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#F5F2EC;color:#2C2C2A;font-size:14px}
+.app{max-width:980px;margin:0 auto;padding:24px 16px}
+.page-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #D3D1C7}
+.page-hdr h1{font-size:18px;font-weight:700;color:#1C1C1C}
+.page-hdr p{font-size:12px;color:#5F5E5A;margin-top:2px}
+#saved{font-size:12px;color:#888780;padding-top:4px}
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #D3D1C7}
+.tab{font-size:13px;font-weight:600;padding:10px 20px;cursor:pointer;color:#5F5E5A;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s}
+.tab:hover{color:#2C2C2A}
+.tab.active{color:#1C1C1C;border-bottom-color:#C9A84C}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.mc{background:#fff;border-radius:10px;border:1px solid #D3D1C7;padding:14px 16px}
+.mc-lbl{font-size:11px;color:#5F5E5A;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.mc-val{font-size:20px;font-weight:700;color:#1C1C1C}
+.mc-val.g{color:#2E7D32}
+.mc-val.a{color:#854F0B}
+.mc-val.b{color:#185FA5}
+.bar{height:5px;background:#D3D1C7;border-radius:3px;margin-top:7px}
+.bar-f{height:100%;background:#2E7D32;border-radius:3px;transition:width .3s}
+.sec-lbl{font-size:11px;font-weight:700;color:#5F5E5A;text-transform:uppercase;letter-spacing:.07em;margin:20px 0 10px}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.dash-card{background:#fff;border:1px solid #D3D1C7;border-radius:10px;padding:12px 14px}
+.dash-uid{font-size:12px;font-weight:700;color:#1C1C1C;margin-bottom:6px}
+.dash-bar-wrap{height:6px;background:#F1EFE8;border-radius:3px;margin-bottom:5px}
+.dash-bar{height:100%;border-radius:3px;background:#C9A84C;transition:width .3s}
+.dash-vals{display:flex;justify-content:space-between;font-size:11px;color:#5F5E5A}
+.dash-vals span:last-child{font-weight:700;color:#2E7D32}
+.dash-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:12px;margin-top:4px;font-weight:600}
+.b0{background:#F1EFE8;color:#5F5E5A}
+.b1{background:#FFF3CD;color:#664D00}
+.b2{background:#D1E7FF;color:#0A4D8C}
+.b3{background:#D1F0D1;color:#1B5E20}
+.units{display:flex;flex-direction:column;gap:6px}
+.ucard{background:#fff;border:1px solid #D3D1C7;border-radius:12px;overflow:hidden}
+.uhdr{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;background:#fff;transition:background .15s;user-select:none}
+.uhdr:hover{background:#F5F2EC}
+.uid{font-size:13px;font-weight:700;color:#1C1C1C;min-width:52px}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;flex:1;display:inline-block}
+.uval{text-align:right;min-width:90px}
+.uval-m{font-size:13px;font-weight:700;color:#1C1C1C}
+.uval-s{font-size:11px;color:#888780}
+.upct-lbl{font-size:11px;color:#5F5E5A;min-width:36px;text-align:right}
+.mini-bar-wrap{min-width:60px;height:4px;background:#D3D1C7;border-radius:2px;align-self:center}
+.mini-bar{height:100%;background:#C9A84C;border-radius:2px}
+.chev{font-size:13px;color:#888780;flex-shrink:0;min-width:16px;text-align:center}
+.det{border-top:1px solid #D3D1C7;padding:16px 14px;display:none}
+.det.open{display:block}
+.det-section{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #F1EFE8}
+.det-section:last-child{border:none;margin-bottom:0;padding-bottom:0}
+.dtitle{font-size:11px;color:#5F5E5A;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;font-weight:700}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fgrid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.frow{display:flex;flex-direction:column;gap:3px}
+.frow label{font-size:12px;color:#5F5E5A}
+.frow input,.frow select{font-size:13px;padding:6px 9px;border-radius:7px;border:1px solid #D3D1C7;background:#F5F2EC;color:#1C1C1C;font-family:inherit;width:100%}
+.frow input:focus,.frow select:focus{outline:none;border-color:#C9A84C;background:#fff}
+.frow input.calc{background:#F1EFE8;color:#5F5E5A}
+.sumrow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F1EFE8;font-size:13px}
+.sumrow:last-child{border:none}
+.sumrow .sl{color:#5F5E5A}
+.sumrow .sv{font-weight:700;color:#1C1C1C}
+.sumrow .sv.g{color:#2E7D32}
+.sumrow .sv.b{color:#185FA5}
+.litems{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.li{display:grid;gap:6px;padding:7px 9px;background:#F5F2EC;border-radius:8px;align-items:center;font-size:12px}
+.li-inter{grid-template-columns:110px 110px auto 28px}
+.li-med{grid-template-columns:110px 1fr 110px auto 28px}
+.li-gmed{grid-template-columns:110px 1fr 120px 28px}
+.li-parc{grid-template-columns:110px 110px auto 28px}
+.li input{font-size:12px;padding:4px 7px;border-radius:5px;border:1px solid #D3D1C7;background:#fff;color:#1C1C1C;font-family:inherit;width:100%}
+.li input:focus{outline:none;border-color:#C9A84C}
+.li label{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#5F5E5A;white-space:nowrap;justify-content:flex-start}
+.dbtn{background:#fff;border:1px solid #D3D1C7;cursor:pointer;color:#888780;font-size:13px;padding:3px 7px;border-radius:5px;line-height:1}
+.dbtn:hover{border-color:#E24B4A;color:#E24B4A}
+.abtn{font-size:12px;padding:5px 12px;cursor:pointer;border-radius:6px;border:1px solid #D3D1C7;background:#fff;color:#2C2C2A;display:inline-flex;align-items:center;gap:5px}
+.abtn:hover{background:#F5F2EC}
+.abtn.primary{background:#C9A84C;border-color:#C9A84C;color:#1C1C1C;font-weight:600}
+.abtn.primary:hover{background:#B8973B}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.gen-box{background:#F5F2EC;border:1px solid #D3D1C7;border-radius:8px;padding:12px;margin-bottom:8px}
+.gen-box .gen-title{font-size:12px;font-weight:600;color:#5F5E5A;margin-bottom:8px}
+.sbtn{font-size:13px;padding:8px 20px;margin-top:4px;cursor:pointer;border-radius:8px;border:none;background:#C9A84C;color:#1C1C1C;font-weight:700}
+.sbtn:hover{background:#B8973B}
+.empty-li{font-size:12px;color:#888780;font-style:italic}
+.gmed-card{background:#fff;border:1px solid #D3D1C7;border-radius:10px;padding:14px;margin-bottom:8px}
+.gmed-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.gmed-title{font-size:13px;font-weight:700;color:#1C1C1C}
+.gmed-total{font-size:13px;font-weight:700;color:#2E7D32}
+.gmed-date{font-size:12px;color:#888780}
+.fc-month{background:#fff;border:1px solid #D3D1C7;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.fc-month-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;background:#fff;user-select:none}
+.fc-month-hdr:hover{background:#F5F2EC}
+.fc-month-title{font-size:14px;font-weight:700;color:#1C1C1C}
+.fc-month-totals{display:flex;gap:16px;font-size:12px}
+.fc-month-totals span{color:#5F5E5A}
+.fc-month-totals strong{color:#2E7D32}
+.fc-month-totals strong.pend{color:#854F0B}
+.fc-items{border-top:1px solid #F1EFE8}
+.fc-item{display:grid;grid-template-columns:90px 1fr 120px 80px 90px;gap:8px;align-items:center;padding:8px 14px;border-bottom:0.5px solid #F1EFE8;font-size:12px}
+.fc-item:last-child{border:none}
+.fc-item.pago{opacity:.6}
+.fc-item-date{color:#5F5E5A;font-size:12px}
+.fc-item-desc{color:#1C1C1C}
+.fc-item-val{font-weight:700;text-align:right;color:#1C1C1C}
+.fc-item-status{text-align:center}
+.fc-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.fc-badge.pago{background:#D1F0D1;color:#1B5E20}
+.fc-badge.pend{background:#FFF3CD;color:#664D00}
+.fc-badge.atras{background:#FFDDD8;color:#8B0000}
+.fc-chk{cursor:pointer}
+.fc-item-uid{font-size:11px;color:#888780}
+.fc-empty{font-size:13px;color:#888780;padding:12px 14px;font-style:italic}
+.ps-global{background:#fff;border:1px solid #D3D1C7;border-radius:10px;padding:16px;margin-bottom:16px}
+.ps-global-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ps-global-title{font-size:13px;font-weight:700;color:#1C1C1C}
+.ps-bar-wrap{height:10px;background:#F1EFE8;border-radius:5px;margin-bottom:6px;position:relative}
+.ps-bar-used{height:100%;border-radius:5px;background:#C9A84C;transition:width .3s}
+.ps-bar-limit{position:absolute;right:0;top:-3px;width:2px;height:16px;background:#E24B4A}
+.ps-labels{display:flex;justify-content:space-between;font-size:11px;color:#5F5E5A;margin-bottom:12px}
+.ps-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ps-unit{background:#F5F2EC;border-radius:8px;padding:8px 10px;text-align:center}
+.ps-unit-id{font-size:11px;color:#5F5E5A;margin-bottom:3px}
+.ps-unit-pct{font-size:14px;font-weight:700;color:#1C1C1C}
+.ps-unit-pct.ok{color:#2E7D32}
+.ps-unit-pct.warn{color:#854F0B}
+.ps-unit-margem{font-size:11px;color:#888780}
+.fc-filter{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.fc-filter label{font-size:12px;color:#5F5E5A}
+.fc-filter select{font-size:12px;padding:5px 8px;border-radius:6px;border:1px solid #D3D1C7;background:#F5F2EC;color:#1C1C1C;font-family:inherit}
+@media(max-width:640px){
+  .metrics,.dash-grid{grid-template-columns:1fr 1fr}
+  .fgrid,.fgrid-3{grid-template-columns:1fr}
+  .mini-bar-wrap{display:none}
+  .fc-item{grid-template-columns:80px 1fr 90px 60px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="page-hdr">
+  <div><h1>Morada Golden Ville</h1><p>Controle financeiro por unidade</p></div>
+  <div id="saved">Não salvo</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="dashboard">Dashboard</div>
+  <div class="tab" data-tab="unidades">Unidades</div>
+  <div class="tab" data-tab="medicoes">Medições Caixa</div>
+  <div class="tab" data-tab="fluxo">Fluxo de Caixa</div>
+</div>
+
+<!-- TAB DASHBOARD -->
+<div class="tab-content active" id="tab-dashboard">
+  <div class="metrics">
+    <div class="mc"><div class="mc-lbl">VGV líquido total</div><div class="mc-val" id="m0">—</div></div>
+    <div class="mc"><div class="mc-lbl">Total recebido</div><div class="mc-val g" id="m1">R$ 0</div><div class="bar"><div class="bar-f" id="m1b" style="width:0%"></div></div></div>
+    <div class="mc"><div class="mc-lbl">A receber — obra</div><div class="mc-val a" id="m2">R$ 0</div></div>
+    <div class="mc"><div class="mc-lbl">A receber — pós-obra</div><div class="mc-val b" id="m3">R$ 0</div></div>
+  </div>
+  <div class="sec-lbl">Pós-obra — controle pro soluto (limite global: 5% do VGV bruto)</div>
+  <div id="ps-wrap"></div>
+  <div class="sec-lbl">Recebido por unidade</div>
+  <div class="dash-grid">
+<div class="dash-card">
+  <div class="dash-uid">Unidade 01</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-01" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-01">R$ 0</span><span id="dpct-01">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-01">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 02</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-02" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-02">R$ 0</span><span id="dpct-02">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-02">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 03</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-03" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-03">R$ 0</span><span id="dpct-03">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-03">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 04</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-04" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-04">R$ 0</span><span id="dpct-04">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-04">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 05</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-05" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-05">R$ 0</span><span id="dpct-05">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-05">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 06</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-06" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-06">R$ 0</span><span id="dpct-06">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-06">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 07</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-07" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-07">R$ 0</span><span id="dpct-07">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-07">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 08</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-08" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-08">R$ 0</span><span id="dpct-08">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-08">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 09</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-09" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-09">R$ 0</span><span id="dpct-09">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-09">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 10</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-10" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-10">R$ 0</span><span id="dpct-10">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-10">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 11</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-11" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-11">R$ 0</span><span id="dpct-11">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-11">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 12</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-12" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-12">R$ 0</span><span id="dpct-12">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-12">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 13</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-13" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-13">R$ 0</span><span id="dpct-13">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-13">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 14</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-14" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-14">R$ 0</span><span id="dpct-14">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-14">Disponível</span></div>
+</div>
+<div class="dash-card">
+  <div class="dash-uid">Unidade 15</div>
+  <div class="dash-bar-wrap"><div class="dash-bar" id="db-15" style="width:0%"></div></div>
+  <div class="dash-vals"><span id="drec-15">R$ 0</span><span id="dpct-15">0%</span></div>
+  <div><span class="dash-badge b0" id="dbadge-15">Disponível</span></div>
+</div></div>
+</div>
+
+<!-- TAB UNIDADES -->
+<div class="tab-content" id="tab-unidades">
+  <div class="units">
+<div class="ucard" id="card-01">
+  <div class="uhdr" id="hdr-01">
+    <span class="uid">Un. 01</span>
+    <span class="badge b0" id="badge-01">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-01">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-01">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-01" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-01">0%</div>
+    <div class="chev" id="chev-01">▼</div>
+  </div>
+  <div class="det" id="det-01">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-01"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-01"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-01" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-01" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-01" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-01" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-01" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-01" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-01" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-01" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-01" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-01" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-01">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-01">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-01">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-01">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-01">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-01">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-01">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-01">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-01">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-01" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-01"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-01"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-01">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-01" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-01" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-01"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-01">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-01"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-01">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-01"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-01">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-01" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-01" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-01"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-01">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-01"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-01">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-01">Salvar unidade 01</button>
+  </div>
+</div>
+<div class="ucard" id="card-02">
+  <div class="uhdr" id="hdr-02">
+    <span class="uid">Un. 02</span>
+    <span class="badge b0" id="badge-02">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-02">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-02">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-02" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-02">0%</div>
+    <div class="chev" id="chev-02">▼</div>
+  </div>
+  <div class="det" id="det-02">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-02"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-02"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-02" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-02" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-02" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-02" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-02" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-02" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-02" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-02" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-02" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-02" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-02">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-02">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-02">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-02">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-02">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-02">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-02">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-02">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-02">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-02" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-02"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-02"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-02">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-02" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-02" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-02"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-02">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-02"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-02">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-02"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-02">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-02" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-02" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-02"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-02">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-02"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-02">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-02">Salvar unidade 02</button>
+  </div>
+</div>
+<div class="ucard" id="card-03">
+  <div class="uhdr" id="hdr-03">
+    <span class="uid">Un. 03</span>
+    <span class="badge b0" id="badge-03">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-03">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-03">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-03" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-03">0%</div>
+    <div class="chev" id="chev-03">▼</div>
+  </div>
+  <div class="det" id="det-03">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-03"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-03"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-03" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-03" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-03" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-03" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-03" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-03" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-03" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-03" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-03" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-03" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-03">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-03">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-03">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-03">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-03">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-03">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-03">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-03">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-03">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-03" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-03"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-03"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-03">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-03" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-03" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-03"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-03">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-03"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-03">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-03"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-03">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-03" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-03" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-03"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-03">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-03"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-03">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-03">Salvar unidade 03</button>
+  </div>
+</div>
+<div class="ucard" id="card-04">
+  <div class="uhdr" id="hdr-04">
+    <span class="uid">Un. 04</span>
+    <span class="badge b0" id="badge-04">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-04">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-04">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-04" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-04">0%</div>
+    <div class="chev" id="chev-04">▼</div>
+  </div>
+  <div class="det" id="det-04">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-04"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-04"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-04" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-04" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-04" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-04" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-04" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-04" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-04" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-04" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-04" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-04" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-04">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-04">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-04">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-04">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-04">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-04">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-04">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-04">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-04">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-04" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-04"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-04"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-04">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-04" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-04" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-04"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-04">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-04"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-04">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-04"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-04">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-04" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-04" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-04"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-04">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-04"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-04">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-04">Salvar unidade 04</button>
+  </div>
+</div>
+<div class="ucard" id="card-05">
+  <div class="uhdr" id="hdr-05">
+    <span class="uid">Un. 05</span>
+    <span class="badge b0" id="badge-05">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-05">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-05">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-05" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-05">0%</div>
+    <div class="chev" id="chev-05">▼</div>
+  </div>
+  <div class="det" id="det-05">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-05"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-05"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-05" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-05" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-05" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-05" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-05" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-05" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-05" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-05" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-05" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-05" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-05">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-05">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-05">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-05">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-05">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-05">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-05">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-05">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-05">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-05" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-05"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-05"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-05">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-05" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-05" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-05"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-05">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-05"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-05">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-05"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-05">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-05" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-05" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-05"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-05">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-05"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-05">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-05">Salvar unidade 05</button>
+  </div>
+</div>
+<div class="ucard" id="card-06">
+  <div class="uhdr" id="hdr-06">
+    <span class="uid">Un. 06</span>
+    <span class="badge b0" id="badge-06">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-06">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-06">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-06" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-06">0%</div>
+    <div class="chev" id="chev-06">▼</div>
+  </div>
+  <div class="det" id="det-06">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-06"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-06"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-06" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-06" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-06" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-06" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-06" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-06" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-06" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-06" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-06" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-06" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-06">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-06">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-06">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-06">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-06">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-06">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-06">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-06">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-06">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-06" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-06"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-06"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-06">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-06" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-06" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-06"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-06">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-06"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-06">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-06"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-06">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-06" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-06" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-06"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-06">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-06"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-06">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-06">Salvar unidade 06</button>
+  </div>
+</div>
+<div class="ucard" id="card-07">
+  <div class="uhdr" id="hdr-07">
+    <span class="uid">Un. 07</span>
+    <span class="badge b0" id="badge-07">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-07">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-07">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-07" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-07">0%</div>
+    <div class="chev" id="chev-07">▼</div>
+  </div>
+  <div class="det" id="det-07">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-07"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-07"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-07" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-07" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-07" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-07" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-07" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-07" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-07" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-07" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-07" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-07" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-07">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-07">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-07">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-07">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-07">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-07">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-07">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-07">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-07">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-07" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-07"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-07"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-07">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-07" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-07" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-07"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-07">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-07"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-07">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-07"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-07">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-07" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-07" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-07"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-07">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-07"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-07">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-07">Salvar unidade 07</button>
+  </div>
+</div>
+<div class="ucard" id="card-08">
+  <div class="uhdr" id="hdr-08">
+    <span class="uid">Un. 08</span>
+    <span class="badge b0" id="badge-08">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-08">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-08">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-08" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-08">0%</div>
+    <div class="chev" id="chev-08">▼</div>
+  </div>
+  <div class="det" id="det-08">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-08"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-08"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-08" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-08" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-08" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-08" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-08" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-08" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-08" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-08" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-08" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-08" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-08">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-08">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-08">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-08">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-08">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-08">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-08">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-08">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-08">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-08" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-08"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-08"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-08">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-08" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-08" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-08"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-08">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-08"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-08">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-08"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-08">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-08" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-08" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-08"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-08">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-08"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-08">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-08">Salvar unidade 08</button>
+  </div>
+</div>
+<div class="ucard" id="card-09">
+  <div class="uhdr" id="hdr-09">
+    <span class="uid">Un. 09</span>
+    <span class="badge b0" id="badge-09">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-09">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-09">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-09" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-09">0%</div>
+    <div class="chev" id="chev-09">▼</div>
+  </div>
+  <div class="det" id="det-09">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-09"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-09"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-09" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-09" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-09" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-09" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-09" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-09" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-09" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-09" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-09" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-09" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-09">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-09">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-09">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-09">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-09">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-09">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-09">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-09">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-09">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-09" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-09"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-09"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-09">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-09" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-09" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-09"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-09">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-09"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-09">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-09"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-09">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-09" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-09" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-09"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-09">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-09"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-09">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-09">Salvar unidade 09</button>
+  </div>
+</div>
+<div class="ucard" id="card-10">
+  <div class="uhdr" id="hdr-10">
+    <span class="uid">Un. 10</span>
+    <span class="badge b0" id="badge-10">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-10">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-10">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-10" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-10">0%</div>
+    <div class="chev" id="chev-10">▼</div>
+  </div>
+  <div class="det" id="det-10">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-10"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-10"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-10" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-10" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-10" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-10" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-10" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-10" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-10" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-10" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-10" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-10" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-10">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-10">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-10">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-10">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-10">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-10">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-10">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-10">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-10">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-10" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-10"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-10"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-10">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-10" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-10" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-10"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-10">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-10"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-10">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-10"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-10">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-10" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-10" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-10"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-10">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-10"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-10">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-10">Salvar unidade 10</button>
+  </div>
+</div>
+<div class="ucard" id="card-11">
+  <div class="uhdr" id="hdr-11">
+    <span class="uid">Un. 11</span>
+    <span class="badge b0" id="badge-11">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-11">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-11">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-11" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-11">0%</div>
+    <div class="chev" id="chev-11">▼</div>
+  </div>
+  <div class="det" id="det-11">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-11"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-11"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-11" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-11" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-11" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-11" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-11" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-11" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-11" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-11" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-11" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-11" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-11">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-11">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-11">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-11">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-11">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-11">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-11">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-11">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-11">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-11" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-11"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-11"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-11">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-11" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-11" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-11"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-11">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-11"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-11">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-11"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-11">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-11" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-11" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-11"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-11">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-11"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-11">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-11">Salvar unidade 11</button>
+  </div>
+</div>
+<div class="ucard" id="card-12">
+  <div class="uhdr" id="hdr-12">
+    <span class="uid">Un. 12</span>
+    <span class="badge b0" id="badge-12">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-12">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-12">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-12" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-12">0%</div>
+    <div class="chev" id="chev-12">▼</div>
+  </div>
+  <div class="det" id="det-12">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-12"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-12"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-12" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-12" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-12" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-12" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-12" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-12" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-12" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-12" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-12" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-12" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-12">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-12">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-12">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-12">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-12">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-12">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-12">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-12">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-12">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-12" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-12"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-12"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-12">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-12" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-12" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-12"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-12">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-12"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-12">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-12"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-12">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-12" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-12" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-12"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-12">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-12"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-12">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-12">Salvar unidade 12</button>
+  </div>
+</div>
+<div class="ucard" id="card-13">
+  <div class="uhdr" id="hdr-13">
+    <span class="uid">Un. 13</span>
+    <span class="badge b0" id="badge-13">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-13">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-13">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-13" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-13">0%</div>
+    <div class="chev" id="chev-13">▼</div>
+  </div>
+  <div class="det" id="det-13">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-13"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-13"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-13" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-13" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-13" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-13" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-13" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-13" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-13" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-13" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-13" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-13" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-13">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-13">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-13">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-13">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-13">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-13">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-13">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-13">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-13">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-13" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-13"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-13"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-13">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-13" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-13" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-13"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-13">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-13"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-13">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-13"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-13">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-13" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-13" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-13"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-13">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-13"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-13">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-13">Salvar unidade 13</button>
+  </div>
+</div>
+<div class="ucard" id="card-14">
+  <div class="uhdr" id="hdr-14">
+    <span class="uid">Un. 14</span>
+    <span class="badge b0" id="badge-14">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-14">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-14">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-14" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-14">0%</div>
+    <div class="chev" id="chev-14">▼</div>
+  </div>
+  <div class="det" id="det-14">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-14"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-14"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-14" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-14" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-14" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-14" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-14" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-14" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-14" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-14" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-14" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-14" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-14">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-14">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-14">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-14">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-14">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-14">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-14">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-14">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-14">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-14" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-14"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-14"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-14">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-14" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-14" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-14"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-14">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-14"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-14">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-14"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-14">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-14" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-14" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-14"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-14">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-14"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-14">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-14">Salvar unidade 14</button>
+  </div>
+</div>
+<div class="ucard" id="card-15">
+  <div class="uhdr" id="hdr-15">
+    <span class="uid">Un. 15</span>
+    <span class="badge b0" id="badge-15">Disponível</span>
+    <div class="uval"><div class="uval-m" id="rec-15">R$ 0</div><div class="uval-s">recebido</div></div>
+    <div class="uval"><div class="uval-m" id="vgv-hdr-15">—</div><div class="uval-s">VGV líq.</div></div>
+    <div class="mini-bar-wrap"><div class="mini-bar" id="mini-15" style="width:0%"></div></div>
+    <div class="upct-lbl" id="pct-15">0%</div>
+    <div class="chev" id="chev-15">▼</div>
+  </div>
+  <div class="det" id="det-15">
+
+    <div class="det-section">
+      <div class="dtitle">Dados da venda e financiamento</div>
+      <div class="fgrid">
+        <div class="frow"><label>Status</label><select id="st-15"><option value="Disponível">Disponível</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option><option value="Banco aprovado">Banco aprovado</option><option value="Em obra">Em obra</option><option value="Entregue">Entregue</option></select></div>
+        <div class="frow"><label>Data da venda</label><input type="date" id="dv-15"></div>
+        <div class="frow"><label>Número do contrato Caixa</label><input type="text" id="f-contrato-15" placeholder="Ex: 123456789-0"></div>
+        <div class="frow"><label>Valor de venda (R$)</label><input type="number" id="f-venda-15" placeholder="0"></div>
+        <div class="frow"><label>Valor de avaliação bancária (R$)</label><input type="number" id="f-aval-15" placeholder="0"></div>
+        <div class="frow"><label>Financiamento bancário (R$)</label><input type="number" id="f-fin-15" placeholder="0"></div>
+        <div class="frow"><label>Sinal contratado (R$)</label><input type="number" id="f-sinal-15" placeholder="0"></div>
+        <div class="frow"><label>Comissão corretor (R$)</label><input type="number" id="f-cor-15" placeholder="0"></div>
+        <div class="frow"><label>Documentação cliente (R$)</label><input type="number" id="f-doc-15" placeholder="0"></div>
+        <div class="frow"><label>Imposto sobre avaliação (R$)</label><input type="number" id="f-imp-15" placeholder="0"></div>
+        <div class="frow"><label>VGV líquido (calculado)</label><input type="number" id="f-vgv-15" class="calc" readonly></div>
+        <div class="frow"><label>Valor total parcelado (calculado)</label><input type="number" id="f-parctot-15" class="calc" readonly></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Resumo de recebimentos</div>
+      <div class="sumrow"><span class="sl">VGV líquido</span><span class="sv" id="s-vgv-15">—</span></div>
+      <div class="sumrow"><span class="sl">Sinal recebido</span><span class="sv g" id="s-sinal-15">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Intermediárias recebidas</span><span class="sv g" id="s-inter-15">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Parcelas obra recebidas</span><span class="sv g" id="s-obra-15">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Medições Caixa recebidas</span><span class="sv g" id="s-med-15">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Pós-obra recebido</span><span class="sv g" id="s-pos-15">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">Total recebido</span><span class="sv g" id="s-rec-15">R$ 0</span></div>
+      <div class="sumrow"><span class="sl">A receber</span><span class="sv b" id="s-arec-15">—</span></div>
+      <div class="sumrow"><span class="sl">Progresso</span><span class="sv" id="s-pct-15">0%</span></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Sinal recebido</div>
+      <div class="fgrid">
+        <div class="frow"><label>Valor recebido (R$)</label><input type="number" id="sinal-15" placeholder="0"></div>
+        <div class="frow"><label>Data do recebimento</label><input type="date" id="sinal-dt-15"></div>
+      </div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Intermediárias</div>
+      <div class="litems" id="inter-15"><div class="empty-li">Nenhuma cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-inter-15">+ Adicionar</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas durante a obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas</label><input type="number" id="gen-obra-n-15" placeholder="18" min="1"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-obra-v-15" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-obra-d-15"></div>
+        </div>
+        <button class="abtn primary" id="gen-obra-btn-15">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="obra-15"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-obra-15">+ Adicionar individual</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Medições Caixa — valores desta unidade</div>
+      <div class="litems" id="med-15"><div class="empty-li">Nenhuma medição registrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-med-15">+ Registrar valor desta unidade</button></div>
+    </div>
+
+    <div class="det-section">
+      <div class="dtitle">Parcelas pós-obra</div>
+      <div class="gen-box">
+        <div class="gen-title">Gerar automaticamente</div>
+        <div class="fgrid-3">
+          <div class="frow"><label>Nº de parcelas (máx. 24)</label><input type="number" id="gen-pos-n-15" placeholder="24" min="1" max="24"></div>
+          <div class="frow"><label>Valor por parcela (R$)</label><input type="number" id="gen-pos-v-15" placeholder="0"></div>
+          <div class="frow"><label>Data da 1ª parcela</label><input type="date" id="gen-pos-d-15"></div>
+        </div>
+        <button class="abtn primary" id="gen-pos-btn-15">Gerar parcelas</button>
+      </div>
+      <div class="litems" id="pos-15"><div class="empty-li">Nenhuma parcela cadastrada.</div></div>
+      <div class="btn-row"><button class="abtn" id="add-pos-15">+ Adicionar individual</button></div>
+    </div>
+
+    <button class="sbtn" id="save-15">Salvar unidade 15</button>
+  </div>
+</div></div>
+</div>
+
+<!-- TAB MEDIÇÕES -->
+<div class="tab-content" id="tab-medicoes">
+  <div class="sec-lbl">Medições globais da obra</div>
+  <p style="font-size:13px;color:#5F5E5A;margin-bottom:14px">Registre aqui cada medição total liberada pela Caixa. Os valores individuais por unidade são registrados dentro de cada unidade na aba Unidades.</p>
+  <div id="gmed-list"><div class="empty-li">Nenhuma medição registrada.</div></div>
+  <div class="btn-row" style="margin-top:10px">
+    <button class="abtn primary" id="add-gmed">+ Nova medição</button>
+    <button class="sbtn" id="save-gmed">Salvar medições</button>
+  </div>
+</div>
+
+<!-- TAB FLUXO -->
+<div class="tab-content" id="tab-fluxo">
+  <div class="fc-filter">
+    <label>Status</label>
+    <select id="fc-filtro-status">
+      <option value="todos">Todos</option>
+      <option value="pendente">Pendentes</option>
+      <option value="recebido">Recebidos</option>
+      <option value="atrasado">Atrasados</option>
+    </select>
+    <label>Unidade</label>
+    <select id="fc-filtro-uid">
+      <option value="todos">Todas</option>
+      <option value="01">Unidade 01</option><option value="02">Unidade 02</option><option value="03">Unidade 03</option><option value="04">Unidade 04</option><option value="05">Unidade 05</option><option value="06">Unidade 06</option><option value="07">Unidade 07</option><option value="08">Unidade 08</option><option value="09">Unidade 09</option><option value="10">Unidade 10</option><option value="11">Unidade 11</option><option value="12">Unidade 12</option><option value="13">Unidade 13</option><option value="14">Unidade 14</option><option value="15">Unidade 15</option>
+    </select>
+  </div>
+  <div id="fluxo-wrap"><div class="fc-empty">Nenhum lançamento encontrado.</div></div>
+</div>
+
+</div>
+<script>
+const IDS = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15'];
+const BADGE = {'Disponível':'b0','Reservado':'b1','Vendido':'b2','Banco aprovado':'b3','Em obra':'b3','Entregue':'b3'};
+const fmt = v => (!v||isNaN(v)) ? 'R$ 0' : 'R$ '+Math.round(v).toLocaleString('pt-BR');
+const fmtV = v => (v>0) ? fmt(v) : '—';
+const fmtD = d => { if(!d) return '—'; const [y,m,dd]=d.split('-'); return dd+'/'+m+'/'+y; };
+const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const today = () => new Date().toISOString().split('T')[0];
+const add30 = () => { const d=new Date(); d.setDate(d.getDate()+30); return d.toISOString().split('T')[0]; };
+const n = v => parseFloat(v)||0;
+const g = id => document.getElementById(id);
+
+function addMonths(dateStr, months) {
+  const d = new Date(dateStr+'T12:00:00');
+  d.setMonth(d.getMonth()+months);
+  return d.toISOString().split('T')[0];
+}
+
+let S = {};
+let GM = []; // medições globais
+
+IDS.forEach(id => S[id] = {
+  status:'Disponível',dataVenda:'',contrato:'',
+  venda:0,aval:0,fin:0,fSinal:0,cor:0,doc:0,imp:0,impManual:false,
+  sinal:0,sinalDt:'',
+  inter:[],obra:[],med:[],pos:[]
+});
+
+function calcVgv(id) {
+  const s=S[id];
+  return Math.max(0, n(s.venda) - n(s.cor) - n(s.doc) - n(s.imp));
+}
+function calcParcTot(id) {
+  const s=S[id]; let t=n(s.sinal);
+  (s.inter||[]).forEach(i=>t+=n(i.val));
+  (s.obra||[]).forEach(o=>t+=n(o.val));
+  (s.pos||[]).forEach(p=>t+=n(p.val));
+  return t;
+}
+function calcRec(id) {
+  const s=S[id]; let r=n(s.sinal);
+  (s.inter||[]).forEach(i=>{if(i.pago)r+=n(i.val);});
+  (s.obra||[]).forEach(o=>{if(o.pago)r+=n(o.val);});
+  (s.med||[]).forEach(m=>{if(m.pago)r+=n(m.val);});
+  (s.pos||[]).forEach(p=>{if(p.pago)r+=n(p.val);});
+  return r;
+}
+function calcInterRec(id){let t=0;(S[id].inter||[]).forEach(i=>{if(i.pago)t+=n(i.val);});return t;}
+function calcObraRec(id){let t=0;(S[id].obra||[]).forEach(o=>{if(o.pago)t+=n(o.val);});return t;}
+function calcMedRec(id){let t=0;(S[id].med||[]).forEach(m=>{if(m.pago)t+=n(m.val);});return t;}
+function calcPosRec(id){let t=0;(S[id].pos||[]).forEach(p=>{if(p.pago)t+=n(p.val);});return t;}
+function calcObraPend(id){
+  let t=0;
+  (S[id].obra||[]).forEach(o=>{if(!o.pago)t+=n(o.val);});
+  (S[id].med||[]).forEach(m=>{if(!m.pago)t+=n(m.val);});
+  return t;
+}
+function calcPosPend(id){let t=0;(S[id].pos||[]).forEach(p=>{if(!p.pago)t+=n(p.val);});return t;}
+
+function refreshUnit(id) {
+  const vgv=calcVgv(id), rec=calcRec(id), parcTot=calcParcTot(id);
+  S[id].vgv=vgv;
+  const pct=vgv>0?Math.min(100,Math.round(rec/vgv*100)):0;
+  const bc=BADGE[S[id].status]||'b0';
+  const set=(el,v)=>{const e=g(el);if(e)e.textContent=v;};
+  const setV=(el,v)=>{const e=g(el);if(e)e.value=v||'';};
+  setV('f-vgv-'+id, vgv>0?Math.round(vgv):'');
+  setV('f-parctot-'+id, parcTot>0?Math.round(parcTot):'');
+  set('vgv-hdr-'+id, vgv>0?fmtV(vgv):'—');
+  set('rec-'+id, fmt(rec));
+  set('pct-'+id, pct+'%');
+  const mb=g('mini-'+id); if(mb)mb.style.width=pct+'%';
+  const badge=g('badge-'+id);
+  if(badge){badge.className='badge '+bc;badge.textContent=S[id].status;}
+  set('s-vgv-'+id, fmtV(vgv));
+  set('s-sinal-'+id, fmt(n(S[id].sinal)));
+  set('s-inter-'+id, fmt(calcInterRec(id)));
+  set('s-obra-'+id, fmt(calcObraRec(id)));
+  set('s-med-'+id, fmt(calcMedRec(id)));
+  set('s-pos-'+id, fmt(calcPosRec(id)));
+  set('s-rec-'+id, fmt(rec));
+  set('s-arec-'+id, vgv>0?fmt(Math.max(0,vgv-rec)):'—');
+  set('s-pct-'+id, pct+'%');
+  const db=g('db-'+id); if(db)db.style.width=pct+'%';
+  set('drec-'+id, fmt(rec));
+  set('dpct-'+id, pct+'%');
+  const dbadge=g('dbadge-'+id);
+  if(dbadge){dbadge.className='dash-badge '+bc;dbadge.textContent=S[id].status;}
+}
+
+function updateMetrics() {
+  let tot=0,rec=0,obra=0,pos=0;
+  IDS.forEach(id=>{tot+=calcVgv(id);rec+=calcRec(id);obra+=calcObraPend(id);pos+=calcPosPend(id);});
+  g('m0').textContent=fmtV(tot);
+  g('m1').textContent=fmt(rec);
+  g('m2').textContent=fmt(obra);
+  g('m3').textContent=fmt(pos);
+  g('m1b').style.width=(tot>0?Math.min(100,Math.round(rec/tot*100)):0)+'%';
+}
+
+function renderList(id, arr) {
+  const wrap=g(arr+'-'+id);
+  const items=S[id][arr]||[];
+  if(!items.length){wrap.innerHTML='<div class="empty-li">Nenhum item cadastrado.</div>';return;}
+  wrap.innerHTML=items.map((it,i)=>{
+    if(arr==='med') return `<div class="li li-med" data-id="${id}" data-arr="med" data-i="${i}">
+      <input type="date" class="li-date" value="${it.data||''}">
+      <input type="text" class="li-desc" value="${it.desc||''}" placeholder="Referência (ex: Medição 1)">
+      <input type="number" class="li-val" value="${it.val||''}" placeholder="R$ desta unidade">
+      <label><input type="checkbox" class="li-chk" ${it.pago?'checked':''}> Recebido</label>
+      <button class="dbtn li-del">✕</button></div>`;
+    const lbl = arr==='inter'?'Recebido':'Pago';
+    return `<div class="li li-parc" data-id="${id}" data-arr="${arr}" data-i="${i}">
+      <input type="date" class="li-date" value="${it.data||''}">
+      <input type="number" class="li-val" value="${it.val||''}" placeholder="R$">
+      <label><input type="checkbox" class="li-chk" ${it.pago?'checked':''}> ${lbl}</label>
+      <button class="dbtn li-del">✕</button></div>`;
+  }).join('');
+  attachListHandlers(id,arr);
+}
+
+function attachListHandlers(id, arr) {
+  const wrap=g(arr+'-'+id);
+  wrap.querySelectorAll('.li').forEach((li,i)=>{
+    li.querySelector('.li-date')?.addEventListener('change',e=>{S[id][arr][i].data=e.target.value;renderFluxo();});
+    li.querySelector('.li-val')?.addEventListener('input',e=>{S[id][arr][i].val=n(e.target.value);refreshUnit(id);updateMetrics();renderFluxo();scheduleSave();});
+    li.querySelector('.li-desc')?.addEventListener('input',e=>{S[id][arr][i].desc=e.target.value;scheduleSave();});
+    li.querySelector('.li-chk')?.addEventListener('change',e=>{S[id][arr][i].pago=e.target.checked;refreshUnit(id);updateMetrics();renderFluxo();scheduleSave();});
+    li.querySelector('.li-del')?.addEventListener('click',()=>{S[id][arr].splice(i,1);renderList(id,arr);refreshUnit(id);updateMetrics();renderFluxo();scheduleSave();scheduleSave();});
+  });
+}
+
+function genParcelas(id, arr, maxN) {
+  const nEl=g('gen-'+arr+'-n-'+id), vEl=g('gen-'+arr+'-v-'+id), dEl=g('gen-'+arr+'-d-'+id);
+  const numP=parseInt(nEl.value)||0, val=n(vEl.value), dataBase=dEl.value;
+  if(!numP||!val||!dataBase){alert('Preencha número de parcelas, valor e data da 1ª parcela.');return;}
+  if(maxN&&numP>maxN){alert('Máximo '+maxN+' parcelas.');return;}
+  if(S[id][arr].length>0&&!confirm('Substituir parcelas existentes?'))return;
+  S[id][arr]=[];
+  for(let i=0;i<numP;i++) S[id][arr].push({data:addMonths(dataBase,i),val:val,pago:false});
+  renderList(id,arr);refreshUnit(id);updateMetrics();renderFluxo();scheduleSave();
+}
+
+// ---- MEDIÇÕES GLOBAIS ----
+function renderGlobalMed() {
+  const wrap=g('gmed-list');
+  if(!GM.length){wrap.innerHTML='<div class="empty-li">Nenhuma medição registrada.</div>';return;}
+  wrap.innerHTML=GM.map((m,i)=>`
+    <div class="gmed-card">
+      <div class="gmed-hdr">
+        <div>
+          <div class="gmed-title">${m.desc||'Medição '+(i+1)}</div>
+          <div class="gmed-date">${fmtD(m.data)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="gmed-total">${fmt(n(m.total))}</div>
+          <button class="dbtn gmed-del" data-i="${i}">✕</button>
+        </div>
+      </div>
+      <div class="li li-gmed" style="margin-top:6px">
+        <input type="date" class="gmed-data" data-i="${i}" value="${m.data||''}">
+        <input type="text" class="gmed-desc" data-i="${i}" value="${m.desc||''}" placeholder="Descrição (ex: 1ª medição — 20% de avanço)">
+        <input type="number" class="gmed-total-inp" data-i="${i}" value="${m.total||''}" placeholder="Total liberado (R$)">
+        <button class="dbtn gmed-del" data-i="${i}">✕</button>
+      </div>
+    </div>`).join('');
+  wrap.querySelectorAll('.gmed-data').forEach(el=>el.addEventListener('change',e=>{
+    const i=+e.target.dataset.i; GM[i].data=e.target.value;
+    const card=el.closest('.gmed-card');
+    if(card) card.querySelector('.gmed-date').textContent=fmtD(e.target.value);
+  }));
+  wrap.querySelectorAll('.gmed-desc').forEach(el=>el.addEventListener('input',e=>{
+    const i=+e.target.dataset.i; GM[i].desc=e.target.value;
+    const card=el.closest('.gmed-card');
+    if(card) card.querySelector('.gmed-title').textContent=e.target.value||('Medição '+(i+1));
+  }));
+  wrap.querySelectorAll('.gmed-total-inp').forEach(el=>el.addEventListener('input',e=>{
+    const i=+e.target.dataset.i; GM[i].total=n(e.target.value);
+    const card=el.closest('.gmed-card');
+    if(card) card.querySelector('.gmed-total').textContent=fmt(n(e.target.value));
+  }));
+  wrap.querySelectorAll('.gmed-del').forEach(el=>el.addEventListener('click',e=>{GM.splice(+e.target.dataset.i,1);renderGlobalMed();}));
+}
+
+// ---- PRO SOLUTO ----
+function renderProSoluto() {
+  const wrap=g('ps-wrap'); if(!wrap) return;
+  const LIMITE=0.05;
+
+  // VGV bruto = valor de venda (sem deduções)
+  let totalBruto=0, totalPos=0;
+  IDS.forEach(id=>{ totalBruto+=n(S[id].venda); });
+  IDS.forEach(id=>{ (S[id].pos||[]).forEach(p=>totalPos+=n(p.val)); });
+
+  const tetoGlobal = totalBruto * LIMITE;
+  const pctGlobal = totalBruto>0 ? totalPos/totalBruto : 0;
+  const margemGlobalR = Math.max(0, tetoGlobal - totalPos);
+  const barW = Math.min(100, Math.round(pctGlobal/LIMITE*100));
+  const globalOk = pctGlobal <= LIMITE;
+
+  const unitsHTML = IDS.map(id=>{
+    const bruto = n(S[id].venda);
+    let pos=0; (S[id].pos||[]).forEach(p=>pos+=n(p.val));
+    const tetoInd = bruto * LIMITE;
+    const pct = bruto>0 ? pos/bruto : 0;
+    const pctFmt = (pct*100).toFixed(1)+'%';
+    const margemInd = tetoInd - pos; // pode ser negativo se redistribuiu de outra
+    const acimaTeto = pos > tetoInd;
+    const cls = acimaTeto ? 'warn' : 'ok';
+    const margemTxt = acimaTeto
+      ? `<span style="color:#E24B4A">+${fmt(Math.abs(margemInd))} acima do teto</span>`
+      : `<span style="color:#888780">margem: ${fmt(margemInd)}</span>`;
+    const tetoFmt = bruto>0 ? fmt(tetoInd) : '—';
+    return `<div class="ps-unit" title="Teto individual: ${tetoFmt}">
+      <div class="ps-unit-id">Un. ${id}</div>
+      <div class="ps-unit-pct ${cls}">${pctFmt}</div>
+      <div class="ps-unit-margem">${margemTxt}</div>
+      <div class="ps-unit-margem" style="margin-top:2px;color:#5F5E5A">${fmt(pos)} / ${tetoFmt}</div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML=`
+    <div class="ps-global">
+      <div class="ps-global-hdr">
+        <div class="ps-global-title">Uso global do pro soluto — base VGV bruto</div>
+        <div style="font-size:13px;color:#5F5E5A;text-align:right">
+          Teto global: <strong>${fmt(tetoGlobal)}</strong>
+          &nbsp;|&nbsp; Usado: <strong style="color:${globalOk?'#2E7D32':'#E24B4A'}">${fmt(totalPos)} (${(pctGlobal*100).toFixed(2)}%)</strong>
+          &nbsp;|&nbsp; Saldo redistribuível: <strong style="color:#185FA5">${fmt(margemGlobalR)}</strong>
+        </div>
+      </div>
+      <div class="ps-bar-wrap">
+        <div class="ps-bar-used" style="width:${barW}%;background:${globalOk?'#C9A84C':'#E24B4A'}"></div>
+        <div class="ps-bar-limit" title="Limite 5%"></div>
+      </div>
+      <div class="ps-labels"><span>0%</span><span>Limite: 5% do VGV bruto total</span></div>
+      <div style="font-size:12px;color:#5F5E5A;margin-bottom:10px;font-style:italic">
+        Unidades acima do teto individual (5%) são permitidas desde que o total global esteja dentro do limite.
+        Teto individual é referência, não limite rígido.
+      </div>
+      <div class="ps-grid">${unitsHTML}</div>
+    </div>`;
+}
+
+// ---- FLUXO DE CAIXA ----
+function buildFluxoItems() {
+  const items=[];
+  const tdy=today();
+  IDS.forEach(id=>{
+    const s=S[id];
+    if(n(s.sinal)>0&&s.sinalDt) items.push({data:s.sinalDt,desc:'Sinal',uid:id,val:n(s.sinal),pago:n(s.sinal)>0,tipo:'sinal',idx:-1});
+    (s.inter||[]).forEach((it,i)=>{if(it.data)items.push({data:it.data,desc:'Intermediária',uid:id,val:n(it.val),pago:it.pago,tipo:'inter',idx:i});});
+    (s.obra||[]).forEach((it,i)=>{if(it.data)items.push({data:it.data,desc:'Parcela obra',uid:id,val:n(it.val),pago:it.pago,tipo:'obra',idx:i});});
+    (s.med||[]).forEach((it,i)=>{if(it.data)items.push({data:it.data,desc:it.desc||'Medição Caixa',uid:id,val:n(it.val),pago:it.pago,tipo:'med',idx:i});});
+    (s.pos||[]).forEach((it,i)=>{if(it.data)items.push({data:it.data,desc:'Pós-obra',uid:id,val:n(it.val),pago:it.pago,tipo:'pos',idx:i});});
+  });
+  items.sort((a,b)=>a.data.localeCompare(b.data));
+  return items;
+}
+
+function renderFluxo() {
+  const wrap=g('fluxo-wrap');
+  const filtroStatus=g('fc-filtro-status')?.value||'todos';
+  const filtroUid=g('fc-filtro-uid')?.value||'todos';
+  let items=buildFluxoItems();
+  const tdy=today();
+  if(filtroStatus==='pendente') items=items.filter(i=>!i.pago);
+  if(filtroStatus==='recebido') items=items.filter(i=>i.pago);
+  if(filtroStatus==='atrasado') items=items.filter(i=>!i.pago&&i.data<tdy);
+  if(filtroUid!=='todos') items=items.filter(i=>i.uid===filtroUid);
+  if(!items.length){wrap.innerHTML='<div class="fc-empty">Nenhum item encontrado.</div>';return;}
+
+  // agrupar por mês
+  const byMonth={};
+  items.forEach(it=>{
+    const [y,m]=it.data.split('-');
+    const key=y+'-'+m;
+    if(!byMonth[key]) byMonth[key]={label:MONTHS_PT[+m-1]+' '+y,items:[],totRec:0,totPend:0};
+    byMonth[key].items.push(it);
+    if(it.pago) byMonth[key].totRec+=it.val;
+    else byMonth[key].totPend+=it.val;
+  });
+
+  wrap.innerHTML=Object.entries(byMonth).map(([key,mo])=>`
+    <div class="fc-month">
+      <div class="fc-month-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <div class="fc-month-title">${mo.label}</div>
+        <div class="fc-month-totals">
+          <span>Recebido: <strong>${fmt(mo.totRec)}</strong></span>
+          <span>A receber: <strong class="pend">${fmt(mo.totPend)}</strong></span>
+        </div>
+      </div>
+      <div class="fc-items">
+        ${mo.items.map(it=>{
+          const atras=!it.pago&&it.data<tdy;
+          const stBadge=it.pago?'<span class="fc-badge pago">Recebido</span>':(atras?'<span class="fc-badge atras">Atrasado</span>':'<span class="fc-badge pend">Pendente</span>');
+          return `<div class="fc-item${it.pago?' pago':''}">
+            <span class="fc-item-date">${fmtD(it.data)}</span>
+            <span class="fc-item-desc">${it.desc}</span>
+            <span class="fc-item-uid">Un. ${it.uid}</span>
+            <span class="fc-item-val">${fmt(it.val)}</span>
+            <span class="fc-item-status">${stBadge}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ---- TABS ----
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.tab[data-tab="'+id+'"]').classList.add('active');
+  g('tab-'+id).classList.add('active');
+  if(id==='fluxo') renderFluxo();
+  if(id==='medicoes') renderGlobalMed();
+  if(id==='dashboard') renderProSoluto();
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.tab)));
+
+// ---- SAVE / LOAD ----
+const API_URL = 'https://script.google.com/macros/s/AKfycbyhyGuHjxW-j7-f7RtGwIXHoIBJLO_DcFAwbRaEKFFLGaiFZl1h8fG40G2fef9OLzpd/exec';
+
+let saveTimer = null;
+function scheduleSave() {
+  const saved = g('saved');
+  saved.textContent = 'Alterações pendentes...';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => { await saveAll(); }, 3000);
+}
+
+async function saveAll() {
+  const saved = g('saved');
+  saved.textContent = 'Salvando...';
+  try {
+    const resp = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({S, GM}),
+    });
+    const r = await resp.json();
+    if(r.ok) {
+      const t = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      saved.textContent = 'Salvo às '+t;
+    } else {
+      saved.textContent = 'Erro ao salvar';
+    }
+  } catch(e) {
+    localStorage.setItem('tmx_gv7', JSON.stringify({S,GM}));
+    const t = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    saved.textContent = 'Salvo localmente às '+t;
+  }
+}
+
+async function loadAll() {
+  const saved = g('saved');
+  saved.textContent = 'Carregando...';
+  try {
+    const resp = await fetch(API_URL+'?action=load&key=dados');
+    const text = await resp.text();
+    if(text && text !== '{}') {
+      const d = JSON.parse(text);
+      if(d.S) IDS.forEach(id=>{if(d.S[id])S[id]=d.S[id];});
+      if(d.GM) GM=d.GM;
+    }
+    saved.textContent = 'Dados carregados';
+  } catch(e) {
+    try {
+      const r = localStorage.getItem('tmx_gv7');
+      if(r){ const d=JSON.parse(r); if(d.S) IDS.forEach(id=>{if(d.S[id])S[id]=d.S[id];}); if(d.GM) GM=d.GM; }
+    } catch(e2){}
+    saved.textContent = 'Modo offline';
+  }
+  IDS.forEach(id=>{applyToForm(id);refreshUnit(id);['inter','obra','med','pos'].forEach(arr=>renderList(id,arr));});
+  updateMetrics();
+  renderProSoluto();
+  renderGlobalMed();
+}
+
+function applyToForm(id) {
+  const s=S[id];
+  const setV=(f,v)=>{const e=g(f);if(e&&v!=null)e.value=v;};
+  const stEl=g('st-'+id); if(stEl) stEl.value=s.status;
+  setV('dv-'+id,s.dataVenda); setV('f-contrato-'+id,s.contrato);
+  setV('f-venda-'+id,s.venda||''); setV('f-aval-'+id,s.aval||'');
+  setV('f-fin-'+id,s.fin||''); setV('f-sinal-'+id,s.fSinal||'');
+  setV('f-cor-'+id,s.cor||''); setV('f-doc-'+id,s.doc||''); setV('f-imp-'+id,s.imp||'');
+  setV('sinal-'+id,s.sinal||''); setV('sinal-dt-'+id,s.sinalDt||'');
+}
+
+// ---- UNIT EVENTS ----
+IDS.forEach(id=>{
+  g('hdr-'+id).addEventListener('click',()=>{
+    const det=g('det-'+id),chev=g('chev-'+id);
+    const open=det.classList.toggle('open');
+    chev.textContent=open?'▲':'▼';
+  });
+  g('st-'+id).addEventListener('change',e=>{S[id].status=e.target.value;refreshUnit(id);scheduleSave();});
+  g('dv-'+id).addEventListener('change',e=>{S[id].dataVenda=e.target.value;scheduleSave();});
+  g('f-contrato-'+id).addEventListener('input',e=>{S[id].contrato=e.target.value;scheduleSave();});
+  ['venda','aval','fin','cor','doc','imp'].forEach(f=>{
+    g('f-'+f+'-'+id)?.addEventListener('input',e=>{
+      S[id][f]=n(e.target.value);
+      if(f==='aval'&&!S[id].impManual){
+        const impEl=g('f-imp-'+id);
+        if(impEl){const v=Math.round(n(e.target.value)*0.01);impEl.value=v;S[id].imp=v;}
+      }
+      if(f==='imp') S[id].impManual=true;
+      refreshUnit(id);updateMetrics();scheduleSave();
+    });
+  });
+  g('f-sinal-'+id)?.addEventListener('input',e=>{S[id].fSinal=n(e.target.value);scheduleSave();});
+  g('sinal-'+id).addEventListener('input',e=>{S[id].sinal=n(e.target.value);refreshUnit(id);updateMetrics();renderFluxo();scheduleSave();});
+  g('sinal-dt-'+id).addEventListener('change',e=>{S[id].sinalDt=e.target.value;renderFluxo();scheduleSave();});
+  g('add-inter-'+id).addEventListener('click',()=>{S[id].inter.push({data:'',val:0,pago:false});renderList(id,'inter');scheduleSave();});
+  g('add-obra-'+id).addEventListener('click',()=>{S[id].obra.push({data:'',val:0,pago:false});renderList(id,'obra');scheduleSave();});
+  g('add-med-'+id).addEventListener('click',()=>{S[id].med.push({data:'',desc:'',val:0,pago:false});renderList(id,'med');scheduleSave();});
+  g('add-pos-'+id).addEventListener('click',()=>{
+    if(S[id].pos.length>=24){alert('Máximo 24 parcelas.');return;}
+    S[id].pos.push({data:'',val:0,pago:false});renderList(id,'pos');
+  });
+  g('gen-obra-btn-'+id).addEventListener('click',()=>genParcelas(id,'obra',null));
+  g('gen-pos-btn-'+id).addEventListener('click',()=>genParcelas(id,'pos',24));
+  g('save-'+id).addEventListener('click',async()=>{await saveAll();refreshUnit(id);updateMetrics();renderProSoluto();});
+});
+
+// ---- MEDIÇÕES GLOBAIS EVENTS ----
+g('add-gmed').addEventListener('click',()=>{
+  GM.push({data:'',desc:'',total:0});
+  renderGlobalMed();
+});
+g('save-gmed').addEventListener('click',async()=>{await saveAll();alert('Medições salvas.');});
+
+// ---- FLUXO EVENTS ----
+g('fc-filtro-status').addEventListener('change',()=>renderFluxo());
+g('fc-filtro-uid').addEventListener('change',()=>renderFluxo());
+
+loadAll();
+</script>
+</body>
+</html>
